@@ -1,0 +1,68 @@
+﻿@model List<Department>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Departments</h1>
+<a asp-action="Add" asp-controller="Department" class="btn btn-primary m-2">Add</a>
+
+<table class="table table-bordered table-hover">
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Manager Name</th>
+    </tr>
+    @foreach (var dept in Model)
+    {
+        <tr>
+            <td>@dept.Id</td>
+            <td>@dept.Name</td>
+            <td>@dept.ManagerName</td>
+            <td>
+                <a asp-action="Update" asp-controller="Department" asp-route-id="@dept.Id" class="btn btn-primary m-2">Update</a>
+                <a asp-action="Update" asp-controller="Department" class="btn btn-danger m-2 delete-btn" data-id="@dept.Id" data-url="@Url.Action("Delete", "Department", new { id = dept.Id })">Delete</a>
+            </td>
+        </tr>
+    }
+</table>
+
+@if (ViewBag.TotalPages > 1)
+{
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage - 1)" asp-route-searchTerm="@ViewBag.SearchTerm">Previous</a>
+            </li>
+
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchTerm="@ViewBag.SearchTerm">@i</a>
+                </li>
+            }
+
+            <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
+                <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage + 1)" asp-route-searchTerm="@ViewBag.SearchTerm">Next</a>
+            </li>
+        </ul>
+    </nav>
+}
+
+<!-- JavaScript for Confirmation Dialog -->
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault(); // Prevent default link behavior
+                    const id = this.getAttribute('data-id');
+                    const url = this.getAttribute('data-url');
+
+                    if (confirm('Are you sure you want to delete?')) {
+                        window.location.href = url; // Redirect to delete action if confirmed
+                    }
+                });
+            });
+        });
+    </script>
+}
